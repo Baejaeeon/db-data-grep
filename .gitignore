@@ -64,6 +64,7 @@ hs_err_pid*
 
 # DB
 wasupDB
+sampleDB
 derby.log
 
 merge.sh
