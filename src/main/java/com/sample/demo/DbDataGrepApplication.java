@@ -86,7 +86,7 @@ public class DbDataGrepApplication extends SpringBootServletInitializer {
 					// generated csv file if table exists.
 					if (fileCount > 0) {
 						for (String tableName : tableNames) {
-							System.err.println(tableName);
+							generatedCsvFiles(stmt, tableName);
 						}
 					}
 				} else if (driverClass.contains("postgres")) {
@@ -105,15 +105,15 @@ public class DbDataGrepApplication extends SpringBootServletInitializer {
 					// generated csv file if table exists.
 					if (fileCount > 0) {
 						for (String tableName : tableNames) {
-							System.err.println(tableName);
+							generatedCsvFiles(stmt, tableName);
 						}
 					}
 				} else if (driverClass.contains("derby")) {
 					String port = System.getProperty("wasup.derby.server.port", "1527");
 
 					// Start Derby DB as network server mode
-					server = new NetworkServerControl(InetAddress.getByName("0.0.0.0"), Integer.parseInt(port));
-					server.start(new PrintWriter(System.out));
+					//server = new NetworkServerControl(InetAddress.getByName("0.0.0.0"), Integer.parseInt(port));
+					//server.start(new PrintWriter(System.out));
 
 					Class.forName(driverClass).newInstance();
 					Connection connection = DriverManager.getConnection(jdbcUrl);
@@ -129,11 +129,9 @@ public class DbDataGrepApplication extends SpringBootServletInitializer {
 					// generated csv file if table exists.
 					if (fileCount > 0) {
 						for (String tableName : tableNames) {
-							//generatedCsvFiles(tableName);
+							generatedCsvFiles(stmt, tableName);
 						}
 					}
-
-					generatedCsvFiles(stmt, "HISTORY");
 				}
 
 				logger.info("Be sure to check if " + fileCount +  " files have been downloaded.");
@@ -145,6 +143,7 @@ public class DbDataGrepApplication extends SpringBootServletInitializer {
 	}
 
 	private static void generatedCsvFiles(Statement stmt, String tableName) throws Exception {
+		logger.info(":+:+:+:+:+:+:+:+: table Name : [{}]", tableName);
 		String home = System.getProperty("user.home");
 		String csvFileName = tableName + ".csv";
 		String downloadPath = home + getProperty("wasup.db.download.path", home) + csvFileName;
@@ -153,68 +152,103 @@ public class DbDataGrepApplication extends SpringBootServletInitializer {
 				"EUC-KR"));
 
 		ResultSet rs = null;
-		if (tableName.equals("ACCESS_CONTROL")) {
-			rs = stmt.executeQuery("select * from access_control;");
-		} else if (tableName.equals("ALERT")) {
-			rs = stmt.executeQuery("select * from alert;");
-		} else if (tableName.equals("APPLICATION")) {
-			rs = stmt.executeQuery("select * from application;");
-		} else if (tableName.equals("ATLASSIAN_SERVER")) {
-			rs = stmt.executeQuery("select * from atlassian_server;");
-		} else if (tableName.equals("CLUSTER")) {
-			rs = stmt.executeQuery("select * from cluster;");
-		} else if (tableName.equals("CONFIG_FILE")) {
-			rs = stmt.executeQuery("select * from config_file;");
-		} else if (tableName.equals("DATASOURCE")) {
-			rs = stmt.executeQuery("select * from datasource;");
-		} else if (tableName.equals("DOMAIN")) {
-			rs = stmt.executeQuery("select * from domain;");
-		} else if (tableName.equals("ENGINE")) {
-			rs = stmt.executeQuery("select * from engine;");
-		} else if (tableName.equals("HISTORY")) {
-			rs = stmt.executeQuery("select * from history;");
-		} else if (tableName.equals("HOST")) {
-			rs = stmt.executeQuery("select * from host;");
-		} else if (tableName.equals("HOST_ALARM")) {
-			rs = stmt.executeQuery("select * from host_alarm;");
-		} else if (tableName.equals("HOST_DETAIL")) {
-			rs = stmt.executeQuery("select * from host_detail;");
-		} else if (tableName.equals("HOST_MONITOR")) {
-			rs = stmt.executeQuery("select * from host_monitor;");
-		} else if (tableName.equals("HOST_ENGINES")) {
-			rs = stmt.executeQuery("select * from host_engines;");
-		} else if (tableName.equals("JVM_MONITOR")) {
-			rs = stmt.executeQuery("select * from jvm_monitor;");
-		} else if (tableName.equals("MEMBER")) {
-			rs = stmt.executeQuery("select * from member;");
-		} else if (tableName.equals("MEMBER_ROLES_DOMAIN")) {
-			rs = stmt.executeQuery("select * from member_roles_domain;");
-		} else if (tableName.equals("ROLE")) {
-			rs = stmt.executeQuery("select * from role;");
-		} else if (tableName.equals("SCOUTER_SERVER")) {
-			rs = stmt.executeQuery("select * from scouter_server;");
-		} else if (tableName.equals("SESSION_SERVER")) {
-			rs = stmt.executeQuery("select * from session_server;");
-		} else if (tableName.equals("SETTINGS")) {
-			rs = stmt.executeQuery("select * from settings;");
-		} else if (tableName.equals("SUBSCRIPTION")) {
-			rs = stmt.executeQuery("select * from subscription;");
-		} else if (tableName.equals("WEB_APP_SERVER")) {
-			rs = stmt.executeQuery("select * from web_app_server;");
-		} else if (tableName.equals("WEB_APP_SERVER_ALARM")) {
-			rs = stmt.executeQuery("select * from web_app_server_alarm;");
-		} else if (tableName.equals("WEB_APP_SERVERS_APPLICATION")) {
-			rs = stmt.executeQuery("select * from web_app_servers_application;");
-		} else if (tableName.equals("WEB_APP_SERVERS_DATASOURCE")) {
-			rs = stmt.executeQuery("select * from web_app_servers_datasource;");
-		} else if (tableName.equals("WEB_SERVER")) {
-			rs = stmt.executeQuery("select * from web_server;");
-		} else if (tableName.equals("WEB_SERVERS_ACCESS_CONTROL")) {
-			rs = stmt.executeQuery("select * from web_servers_access_control;");
-		} else if (tableName.equals("WEB_SERVERS_WEB_APP_SERVERS")) {
-			rs = stmt.executeQuery("select * from web_servers_web_app_servers;");
-		} else if (tableName.equals("WIZARD")) {
-			rs = stmt.executeQuery("select * from wizard;");
+		switch (tableName) {
+			case "ACCESS_CONTROL":
+				rs = stmt.executeQuery("select * from wasup.access_control");
+				break;
+			case "ALERT":
+				rs = stmt.executeQuery("select * from wasup.alert");
+				break;
+			case "APPLICATION":
+				rs = stmt.executeQuery("select * from wasup.application");
+				break;
+			case "ATLASSIAN_SERVER":
+				rs = stmt.executeQuery("select * from wasup.atlassian_server");
+				break;
+			case "CLUSTER":
+				rs = stmt.executeQuery("select * from wasup.cluster");
+				break;
+			case "CONFIG_FILE":
+				rs = stmt.executeQuery("select * from wasup.config_file");
+				break;
+			case "DATASOURCE":
+				rs = stmt.executeQuery("select * from wasup.datasource");
+				break;
+			case "DOMAIN":
+				rs = stmt.executeQuery("select * from wasup.domain");
+				break;
+			case "ENGINE":
+				rs = stmt.executeQuery("select * from wasup.engine");
+				break;
+			case "HISTORY":
+				rs = stmt.executeQuery("select * from wasup.history");
+				break;
+			case "HOST":
+				rs = stmt.executeQuery("select * from wasup.host");
+				break;
+			case "HOST_ALARM":
+				rs = stmt.executeQuery("select * from wasup.host_alarm");
+				break;
+			case "HOST_DETAIL":
+				rs = stmt.executeQuery("select * from wasup.host_detail");
+				break;
+			case "HOST_MONITOR":
+				rs = stmt.executeQuery("select * from wasup.host_monitor");
+				break;
+			case "HOSTS_ENGINES":
+				rs = stmt.executeQuery("select * from wasup.hosts_engines");
+				break;
+			case "JVM_MONITOR":
+				rs = stmt.executeQuery("select * from wasup.jvm_monitor");
+				break;
+			case "MEMBER":
+				rs = stmt.executeQuery("select * from wasup.member");
+				break;
+			case "MEMBERS_ROLES_DOMAINS":
+				rs = stmt.executeQuery("select * from wasup.members_roles_domains");
+				break;
+			case "ROLE":
+				rs = stmt.executeQuery("select * from wasup.role");
+				break;
+			case "SCOUTER_SERVER":
+				rs = stmt.executeQuery("select * from wasup.scouter_server");
+				break;
+			case "SESSION_SERVER":
+				rs = stmt.executeQuery("select * from wasup.session_server");
+				break;
+			case "SETTINGS":
+				rs = stmt.executeQuery("select * from wasup.settings");
+				break;
+			case "SUBSCRIPTION":
+				rs = stmt.executeQuery("select * from wasup.subscription");
+				break;
+			case "WEB_APP_SERVER":
+				rs = stmt.executeQuery("select * from wasup.web_app_server");
+				break;
+			case "WEB_APP_SERVER_ALARM":
+				rs = stmt.executeQuery("select * from wasup.web_app_server_alarm");
+				break;
+			case "WEB_APP_SERVERS_APPLICATIONS":
+				rs = stmt.executeQuery("select * from wasup.web_app_servers_applications");
+				break;
+			case "WEB_APP_SERVERS_DATASOURCES":
+				rs = stmt.executeQuery("select * from wasup.web_app_servers_datasources");
+				break;
+			case "WEB_SERVER":
+				rs = stmt.executeQuery("select * from wasup.web_server");
+				break;
+			case "WEB_SERVERS_ACCESS_CONTROLS":
+				rs = stmt.executeQuery("select * from wasup.web_servers_access_controls");
+				break;
+			case "WEB_SERVERS_WEB_APP_SERVERS":
+				rs = stmt.executeQuery("select * from wasup.web_servers_web_app_servers");
+				break;
+			case "WIZARD":
+				rs = stmt.executeQuery("select * from wasup.wizard");
+				break;
+
+			default:
+				break;
 		}
 
 		//writer.writeNext(entries);

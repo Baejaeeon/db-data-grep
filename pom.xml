@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.sample</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>db-data-grep</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>db-data-grep</name>
 	<description>DB data grep for Spring Boot</description>
@@ -122,6 +122,10 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>com.sample.demo.DbDataGrepApplication</mainClass>
+					<includeSystemScope>true</includeSystemScope>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
