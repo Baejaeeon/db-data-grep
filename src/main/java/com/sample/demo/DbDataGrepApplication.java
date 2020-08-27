@@ -75,7 +75,8 @@ public class DbDataGrepApplication extends SpringBootServletInitializer {
 					Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
 					Statement stmt = connection.createStatement();
 
-					ResultSet results = stmt.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_schema = '" + connection.getCatalog() + "';");
+					ResultSet results = stmt
+							.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_schema = '" + connection.getCatalog() + "';");
 
 					List<String> tableNames = new ArrayList<>();
 					while (results.next()) {
@@ -94,7 +95,8 @@ public class DbDataGrepApplication extends SpringBootServletInitializer {
 					Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
 					Statement stmt = connection.createStatement();
 
-					ResultSet results = stmt.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_type='BASE TABLE' AND table_schema = 'public' AND table_catalog = '" + connection.getCatalog() + "';");
+					ResultSet results = stmt
+							.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_type='BASE TABLE' AND table_schema = 'public' AND table_catalog = '" + connection.getCatalog() + "';");
 
 					List<String> tableNames = new ArrayList<String>();
 					while (results.next()) {
@@ -112,8 +114,8 @@ public class DbDataGrepApplication extends SpringBootServletInitializer {
 					String port = System.getProperty("wasup.derby.server.port", "1527");
 
 					// Start Derby DB as network server mode
-					//server = new NetworkServerControl(InetAddress.getByName("0.0.0.0"), Integer.parseInt(port));
-					//server.start(new PrintWriter(System.out));
+					server = new NetworkServerControl(InetAddress.getByName("0.0.0.0"), Integer.parseInt(port));
+					server.start(new PrintWriter(System.out));
 
 					Class.forName(driverClass).newInstance();
 					Connection connection = DriverManager.getConnection(jdbcUrl);
